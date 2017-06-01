@@ -1,8 +1,9 @@
 import env from 'node-env-file';
 import express from 'express';
 import ApiClient from 'poloniex-api-node';
-
-env('./.env');
+if (process.env.API_KEY == null || process.env.API_SECRET == null) {
+  env('./.env');
+}
 
 const apiClient = new ApiClient(process.env.API_KEY, process.env.API_SECRET);
 const router = express.Router();
@@ -10,7 +11,6 @@ const router = express.Router();
 /* GET index page. */
 router.get('/', (req, res, next) => {
   apiClient.returnCompleteBalances('all', function (err, balances) {
-    console.log(balances);
     const filteredBalances = Object.keys(balances)
     .filter(key => balances[key]['btcValue'] > 0)
     .reduce((prev, key) => {
