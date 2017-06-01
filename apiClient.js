@@ -28,13 +28,18 @@ export default class ApiClient {
     });
   }
 
-  getAvailableCurrencies() {
+  getLendableBtcValues() {
     return new Promise((resolve, reject) => {
       this.poloniexApiClient.returnAvailableAccountBalances(null, function (err, currencies) {
         if (err) {
           reject(err);
         }
-        resolve(currencies);
+
+        if (!currencies['lending']) {
+          resolve(0);
+        } else {
+          resolve(currencies['lending']['BTC']);
+        }
       });
     });
   }
@@ -46,6 +51,39 @@ export default class ApiClient {
           reject(err);
         }
         resolve(orders['offers']);
+      });
+    });
+  }
+
+  getMyBtcLendingOrders() {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.returnOpenLoanOffers(function (err, orders) {
+        if (err) {
+          reject(err);
+        }
+        resolve(orders['BTC']);
+      });
+    });
+  }
+
+  cancelLendingOrder(orderNumber) {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.cancelLoanOffer(orderNumber, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(true);
+      });
+    });
+  }
+
+  createBtcLendingOrder(amount, lendingRate) {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.createLoanOffer('BTC', amount, 2, 0, lendingRate, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
       });
     });
   }
