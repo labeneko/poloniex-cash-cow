@@ -1,27 +1,21 @@
-import env from 'node-env-file';
 import express from 'express';
-import ApiClient from 'poloniex-api-node';
-if (process.env.API_KEY == null || process.env.API_SECRET == null) {
-  env('./.env');
-}
+import ApiClient from '../apiClient.js';
 
-const apiClient = new ApiClient(process.env.API_KEY, process.env.API_SECRET);
 const router = express.Router();
+const apiClient = new ApiClient();
 
 /* GET index page. */
 router.get('/', (req, res, next) => {
-  apiClient.returnCompleteBalances('all', function (err, balances) {
-    const filteredBalances = Object.keys(balances)
-    .filter(key => balances[key]['btcValue'] > 0)
-    .reduce((prev, key) => {
-      prev[key] = balances[key];
-      return prev;
-    }, {});
-    const totalBtcValue = Object.keys(filteredBalances)
-    .reduce((prev, key) => prev + parseFloat(balances[key]['btcValue']), 0)
+  Promise.all([apiClient.getHoldingCurrencies(), apiClient.getBtcPrice()])
+  .then(([holdingCurrencies, btcPrice]) => {
+    const totalBtcValue = Object.keys(holdingCurrencies)
+    .reduce((prev, key) => prev + parseFloat(holdingCurrencies[key]['btcValue']), 0);
+    const valuation = parseInt(totalBtcValue * btcPrice, 10);
     res.render('index', {
-      balances: filteredBalances,
-      totalBtcValue
+      holdingCurrencies,
+      totalBtcValue: totalBtcValue.toFixed(5),
+      btcPrice: btcPrice.toLocaleString(),
+      valuation: valuation.toLocaleString()
     });
   });
 });

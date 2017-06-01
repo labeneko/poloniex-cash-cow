@@ -2,10 +2,10 @@ extends layout
 
 block content
   h1 Welcome!
-  h2 Estimated value of holdings: #{totalBtcValue}
+  h2 Estimated value of holdings: #{totalBtcValue} / ¥#{valuation} (1btc = #{btcPrice})
   ul
-    each balance, currency in balances
+    each values, currency in holdingCurrencies
       li
         ul
           li #{currency}
-          li #{balance.btcValue}BTC
+          li #{values.btcValue}BTC
