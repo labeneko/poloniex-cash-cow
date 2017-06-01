@@ -28,6 +28,28 @@ export default class ApiClient {
     });
   }
 
+  getAvailableCurrencies() {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.returnAvailableAccountBalances(null, function (err, currencies) {
+        if (err) {
+          reject(err);
+        }
+        resolve(currencies);
+      });
+    });
+  }
+
+  getBtcLendingOrders() {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.returnLoanOrders('BTC', null, function (err, orders) {
+        if (err) {
+          reject(err);
+        }
+        resolve(orders['offers']);
+      });
+    });
+  }
+
   getBtcPrice() {
     return new Promise((resolve, reject) => {
       this.bitflyerApiClient.getTicker((err, result) => {
