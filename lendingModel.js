@@ -4,7 +4,7 @@ const wallAmount = 10;
 export default class LendingModel {
   static getLendingRate(orders) {
     if (!orders) {
-      return minLendingRate;
+      return null;
     }
     for ( var key in orders ) {
       const order = orders[key];
@@ -12,6 +12,6 @@ export default class LendingModel {
         return order['rate'] > minLendingRate ? order['rate'] - 0.00000001 : minLendingRate;
       }
     }
-    return minLendingRate;
+    return null;
   }
 }

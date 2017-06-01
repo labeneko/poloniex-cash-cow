@@ -14,4 +14,7 @@ block content
             li #{currency}
             li #{values.btcValue}BTC
   h2 貸出
-    div 今は #{btcLendingPercent} &#37;で貸せそうです
+    if btcLendingPercent
+      div 今は #{btcLendingPercent} &#37;で貸し出します
+    else
+      div 今は貸し出すのはやめといてます

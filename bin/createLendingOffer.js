@@ -27,6 +27,10 @@ apiClient.getMyBtcLendingOrders()
   }
   // 貸出金利を決める
   const lendingRate = parseFloat(LendingModel.getLendingRate(btcLendingOrders));
+  // 最低金利を下回る場合は終了
+  if (lendingRate === null) {
+    process.exit(0);
+  }
   console.log(lendingRate);
   return apiClient.createBtcLendingOrder(lendableBtcValues, lendingRate);
 })
