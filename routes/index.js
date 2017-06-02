@@ -24,9 +24,9 @@ router.get('/', (req, res, next) => {
     const totalCurrenciesBtcValue = Object.keys(holdingCurrencies)
     .reduce((prev, key) => new Decimal(prev).plus(holdingCurrencies[key]['btcValue']).toNumber(), 0);
     const valuation = parseInt(new Decimal(totalCurrenciesBtcValue).times(btcPrice).toNumber(), 10);
-    const btcLendingPercent = new Decimal(LendingModel.getLendingRate(btcLendingOrders)).times(100).toNumber();
+    const btcLendingRate = LendingModel.getLendingRate(btcLendingOrders);
+    const btcLendingPercent = btcLendingRate ? new Decimal(btcLendingRate).times(100).toNumber() : null;
     const totalBtcValue = holdingCurrencies['BTC']['btcValue'];
-    console.log(LendingModel.getBtcDailyInterestRate(totalBtcValue, btcActiveLendings));
     const btcDailyInterestPercent = new Decimal(LendingModel.getBtcDailyInterestRate(totalBtcValue, btcActiveLendings)).times(excludeLendingFeeRate).times(100).toFixed(5);
     const btcYearlyInterestPercent = new Decimal(btcDailyInterestPercent).times(365).toFixed(5);
     const myBtcActiveLendings = Object.keys(btcActiveLendings)
