@@ -66,6 +66,24 @@ export default class ApiClient {
     });
   }
 
+  getMyBtcActiveLendings() {
+    return new Promise((resolve, reject) => {
+      this.poloniexApiClient.returnActiveLoans(function (err, lendings) {
+        if (err) {
+          reject(err);
+        }
+        const btcActiveLendings = Object.keys(lendings['provided'])
+        .filter(key => lendings['provided'][key]['currency'] === 'BTC')
+        .reduce((prev, key) => {
+          prev[key] = lendings['provided'][key];
+          return prev;
+        }, {});
+
+        resolve(btcActiveLendings);
+      });
+    });
+  }
+
   cancelLendingOrder(orderNumber) {
     return new Promise((resolve, reject) => {
       this.poloniexApiClient.cancelLoanOffer(orderNumber, function (err, result) {

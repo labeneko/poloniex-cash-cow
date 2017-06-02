@@ -4,7 +4,7 @@ block content
   h1 Welcome!
   h2 残高
     div
-      div #{totalBtcValue} BTC
+      div #{totalCurrenciesBtcValue} BTC
       div ¥#{valuation} (1btc = #{btcPrice})
   h3 内訳
     ul
@@ -14,7 +14,22 @@ block content
             li #{currency}
             li #{values.btcValue}BTC
   h2 貸出
-    if btcLendingPercent
-      div 今は #{btcLendingPercent} &#37;で貸し出します
-    else
-      div 今は貸し出すのはやめといてます
+    h3 貸出状況
+      if btcLendingPercent
+        div 今は #{btcLendingPercent}&#37;で貸し出します
+      else
+        div 今は貸し出すのはやめといてます
+    h4 現在の貸出実績
+      div #{btcDailyInterestPercent}&#37; / 年利 (#{btcYearlyInterestPercent}&#37;)
+      div 貸出量 #{btcLendingValue}BTC
+      div 貸出率 #{myBtcLendingPercent}&#37; (総保有量 #{totalBtcValue})
+    table
+      tr
+        th 貸出金利
+        th 貸出量
+        th 貸出日時
+      each lending in myBtcActiveLendings
+        tr
+          td #{lending.percent}&#37;
+          td #{lending.amount}
+          td #{lending.date}
