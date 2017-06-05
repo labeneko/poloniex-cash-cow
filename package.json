@@ -20,6 +20,7 @@
     "express": "~4.14.1",
     "less-middleware": "^2.2.0",
     "morgan": "~1.7.0",
+    "nedb": "^1.8.0",
     "node-env-file": "^0.1.8",
     "poloniex-api-node": "^1.1.1",
     "pug": "^2.0.0-beta11",
