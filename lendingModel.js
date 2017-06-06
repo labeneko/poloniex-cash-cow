@@ -1,3 +1,4 @@
+import env from 'node-env-file';
 import Decimal from 'decimal.js';
 
 const minLendingRate = 0.0006;
@@ -8,6 +9,10 @@ export default class LendingModel {
     if (!orders) {
       return null;
     }
+    if (!process.env.WALL_AMOUNT) {
+      env('./.env');
+    }
+    const wallAmount = process.env.WALL_AMOUNT ? process.env.WALL_AMOUNT : 10;
     for ( var key in orders ) {
       const order = orders[key];
       if (order['amount'] > wallAmount) {
