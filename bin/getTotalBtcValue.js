@@ -8,22 +8,28 @@ const ApiClient = require('../apiClient.js').default;
 const LendingModel = require('../lendingModel.js').default;
 const apiClient = new ApiClient();
 const Decimal = require('decimal.js');
-const Datastore = require('nedb');
-const db = new Datastore({ filename: 'nedb.db', autoload: true });
+const MongoClient = require('mongodb').MongoClient;
+
+if (process.env.MONGODB_URL == null) {
+  env('./.env');
+}
+
+const mongoDbUrl = process.env.MONGODB_URL;
 
 Promise.all([apiClient.getHoldingCurrencies(), apiClient.getBtcPrice()])
 .then(function([holdingCurrencies, btcPrice]) {
   const totalBtcValue = Object.keys(holdingCurrencies)
   .reduce((prev, key) => new Decimal(prev).plus(holdingCurrencies[key]['btcValue']).toNumber(), 0);
-  db.insert([
-    { totalBtcValue: totalBtcValue , btcValue: btcPrice, currentTime: new Date().getTime() }
-  ], function (err, newDocs) {
+  MongoClient.connect(mongoDbUrl, function(err, db) {
     if (err) {
       console.log(err);
-    } else {
-      console.log(newDocs);
     }
-    process.exit(0);
+    const collection = db.collection('documents');
+    collection.insert({ totalBtcValue: totalBtcValue , btcValue: btcPrice, currentTime: new Date().getTime() })
+    .then(function(result) {
+      console.log(result);
+      process.exit(0);
+    });
   });
 })
 .catch(function(err){
