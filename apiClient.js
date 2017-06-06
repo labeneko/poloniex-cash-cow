@@ -4,11 +4,11 @@ import BitFlyerApiClient from 'bitflyer-node';
 
 export default class ApiClient {
   constructor() {
-    if (process.env.API_KEY == null || process.env.API_SECRET == null) {
+    if (process.env.API_KEY == null || process.env.API_SECRET == null || process.env.BITFLYER_API_KEY == null || process.env.BITFLYER_API_SECRET == null) {
       env('./.env');
     }
     this.poloniexApiClient = new PoloniexApiClient(process.env.API_KEY, process.env.API_SECRET);
-    this.bitflyerApiClient = new BitFlyerApiClient.REST();
+    this.bitflyerApiClient = new BitFlyerApiClient.REST(process.env.BITFLYER_API_KEY, process.env.BITFLYER_API_SECRET);
   }
 
   getHoldingCurrencies() {
