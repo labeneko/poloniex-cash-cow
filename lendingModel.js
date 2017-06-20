@@ -42,4 +42,21 @@ export default class LendingModel {
     .reduce((prev, key) => new Decimal(prev).plus(btcLendings[key]['amount']).toNumber(), 0);
     return btcLendingValue;
   }
+
+  static getLtcLendingRate(orders) {
+    if (!orders) {
+      return null;
+    }
+    if (!process.env.LTC_WALL_AMOUNT) {
+      env('./.env');
+    }
+    const wallAmount = process.env.LTC_WALL_AMOUNT ? process.env.LTC_WALL_AMOUNT : 1000;
+    for ( var key in orders ) {
+      const order = orders[key];
+      if (order['amount'] > wallAmount) {
+        return order['rate'] > minLendingRate ? new Decimal(order['rate']).minus(0.00000001).toNumber() : null;
+      }
+    }
+    return null;
+  }
 }
