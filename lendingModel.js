@@ -2,6 +2,7 @@ import env from 'node-env-file';
 import Decimal from 'decimal.js';
 
 const minLendingRate = 0.0006;
+const ltcMinLendingRate = 0.0001;
 const wallAmount = 10;
 
 export default class LendingModel {
@@ -54,7 +55,7 @@ export default class LendingModel {
     for ( var key in orders ) {
       const order = orders[key];
       if (order['amount'] > wallAmount) {
-        return order['rate'] > minLendingRate ? new Decimal(order['rate']).minus(0.00000001).toNumber() : null;
+        return order['rate'] > ltcMinLendingRate ? new Decimal(order['rate']).minus(0.00000001).toNumber() : null;
       }
     }
     return null;
